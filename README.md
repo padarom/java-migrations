@@ -6,12 +6,12 @@ Java Migrations for Java 8. _This package is a work in progress._
 ```java
 package io.padarom.migrations.example;
 
+import io.padarom.migrations.MigrationInterface;
 import io.padarom.migrations.Migration;
-import io.padarom.migrations.MigrationClass;
 import io.padarom.migrations.schema.Schema;
 
-@MigrationClass
-public class CreateUsersTable implements Migration {
+@Migration
+public class CreateUsersTable implements MigrationInterface {
 
     @Override
     public void up() {

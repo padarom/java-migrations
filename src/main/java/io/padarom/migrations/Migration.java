@@ -1,7 +1,11 @@
 package io.padarom.migrations;
 
-public interface Migration {
-    public void up();
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public void down();
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Migration {
 }
