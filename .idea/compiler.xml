@@ -27,7 +27,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="migrations" target="1.5" />
+      <module name="migrations" target="1.8" />
       <module name="untitled" target="1.5" />
     </bytecodeTargetLevel>
   </component>
