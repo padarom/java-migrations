@@ -4,23 +4,20 @@ import io.padarom.migrations.Migration;
 import io.padarom.migrations.MigrationInterface;
 import io.padarom.migrations.schema.Schema;
 
-@Migration(
-        priority = 20
+@Migration (
+        priority = 10
 )
-public class CreateUsersTable implements MigrationInterface {
+public class CreateTestsTable implements MigrationInterface {
     public void up() {
-        Schema.create("users", table -> {
+        Schema.create("tests", table -> {
             table.increments("id");
-            table.string("name");
-            table.string("email");
-            table.string("password");
-            table.string("reset_token").nullable();
+            table.string("description");
 
             table.timestamps();
         });
     }
 
     public void down() {
-        Schema.drop("users");
+        Schema.drop("tests");
     }
 }

@@ -8,9 +8,15 @@ I make a living in the world of PHP and personally love the PHP web framework [L
 
 For my Java projects I more and more need to use databases, so I thought it would make sense to have a similar tool at hand that allows you to easily create and then run migrations without too much boilerplate code. The other migration tools I've found for Java didn't quite fit my needs, so I decided to write my own, heavily inspired by Laravel's migration syntax.
 
-## Example Migration
+## Why this?
+
+- No need to learn the markup for XML, YAML or JSON definitions
+- Create the schema using simple, non-verbosive Java
+
+## How to use
+### Define your migration
 ```java
-package io.padarom.migrations.example;
+package path.to.your.migrations;
 
 import io.padarom.migrations.MigrationInterface;
 import io.padarom.migrations.Migration;
@@ -34,4 +40,23 @@ public class CreateUsersTable implements MigrationInterface {
         Schema.drop("users");
     }
 }
+```
+
+You can define the order in which multiple migrations should run by specifying a priority (defaults to `100`):
+```java
+@Migration (priority = 10)
+public class CreateFirstTable implements MigrationInterface {
+   // ...
+}
+
+@Migration (priority = 20)
+public class CreateSecondTable implements MigrationInterface {
+    // ...
+}
+```
+
+### Call the Migrator
+```java
+Migrator migrator = new Migrator("path.to.your.migrations");
+migrator.runAllMigrations();
 ```
