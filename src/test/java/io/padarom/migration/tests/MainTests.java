@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class MainTests {
 
@@ -17,6 +17,9 @@ public class MainTests {
 
         String[] migrationNames = new String[] { "CreateTestsTable", "CreateUsersTable" };
         int counter = 0;
+
+        // The migration list has to contain 2 entries
+        assertEquals(list.size(), 2);
 
         for (MigrationInterface element : list) {
             assertEquals(migrationNames[counter++], element.getClass().getSimpleName());
