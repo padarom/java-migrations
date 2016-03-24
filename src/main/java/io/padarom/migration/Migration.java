@@ -1,4 +1,4 @@
-package io.padarom.migrations;
+package io.padarom.migration;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-package io.padarom.migrations;
+package io.padarom.migration;
 
 import org.reflections.Reflections;
 

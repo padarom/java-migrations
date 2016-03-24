@@ -1,8 +1,8 @@
-package io.padarom.migrations.tests.migration;
+package io.padarom.migration.tests.migrations;
 
-import io.padarom.migrations.Migration;
-import io.padarom.migrations.MigrationInterface;
-import io.padarom.migrations.schema.Schema;
+import io.padarom.migration.Migration;
+import io.padarom.migration.MigrationInterface;
+import io.padarom.migration.schema.Schema;
 
 @Migration(
         priority = 20

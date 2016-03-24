@@ -1,7 +1,7 @@
-package io.padarom.migrations.tests;
+package io.padarom.migration.tests;
 
-import io.padarom.migrations.MigrationInterface;
-import io.padarom.migrations.Migrator;
+import io.padarom.migration.MigrationInterface;
+import io.padarom.migration.Migrator;
 import org.junit.Test;
 
 import java.util.List;
@@ -11,14 +11,9 @@ import static org.junit.Assert.assertEquals;
 public class MainTests {
 
     @Test
-    public void testTests() {
-        assertEquals(7, 7);
-    }
-
-    @Test
     public void itSortsMigrationsByTheirPriority() {
         Migrator migrator = new Migrator("");
-        List<MigrationInterface> list =  migrator.getMigrationList("io.padarom.migrations.tests.migration");
+        List<MigrationInterface> list =  migrator.getMigrationList("io.padarom.migration.tests.migrations");
 
         String[] migrationNames = new String[] { "CreateTestsTable", "CreateUsersTable" };
         int counter = 0;
@@ -27,4 +22,5 @@ public class MainTests {
             assertEquals(migrationNames[counter++], element.getClass().getSimpleName());
         }
     }
+
 }

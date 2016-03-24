@@ -1,14 +1,14 @@
-package io.padarom.migrations.schema;
+package io.padarom.migration.schema;
 
 import java.util.HashMap;
 
 public class Column {
-    protected String type;
-    protected String name;
+    private String type;
+    private String name;
 
-    protected HashMap<String, String> attributes;
+    private HashMap<String, String> attributes;
 
-    public Column(String type, String name, HashMap<String, String> attributes) {
+    Column(String type, String name, HashMap<String, String> attributes) {
         this.type = type;
         this.name = name;
 
@@ -16,7 +16,7 @@ public class Column {
     }
 
     public Column(String type, String name) {
-        this(type, name, new HashMap<String, String>());
+        this(type, name, new HashMap<>());
     }
 
     public Column nullable() {

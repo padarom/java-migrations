@@ -1,4 +1,4 @@
-package io.padarom.migrations.schema;
+package io.padarom.migration.schema;
 
 import java.util.function.Consumer;
 
@@ -32,15 +32,15 @@ public final class Schema {
 
     }
 
-    protected static void build(Blueprint blueprint) {
+    private static void build(Blueprint blueprint) {
         blueprint.build(); // Connection übergeben
     }
 
-    protected static Blueprint createBlueprint(String table, Consumer<Blueprint> lambda) {
+    private static Blueprint createBlueprint(String table, Consumer<Blueprint> lambda) {
         return new Blueprint(table, lambda);
     }
 
-    protected static Blueprint createBlueprint(String table) {
+    private static Blueprint createBlueprint(String table) {
         return new Blueprint(table, null);
     }
 }

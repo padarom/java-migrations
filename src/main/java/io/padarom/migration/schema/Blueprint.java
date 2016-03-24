@@ -1,4 +1,4 @@
-package io.padarom.migrations.schema;
+package io.padarom.migration.schema;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class Blueprint {
-    protected String table;
-    protected List<HashMap<String, String>> commands = new ArrayList<HashMap<String, String>>();
-    protected List<Column> columns = new ArrayList<Column>();
+    private String table;
+    private List<HashMap<String, String>> commands = new ArrayList<>();
+    private List<Column> columns = new ArrayList<>();
 
-    public Blueprint(String table, Consumer<Blueprint> lambda) {
+    Blueprint(String table, Consumer<Blueprint> lambda) {
         this.table = table;
 
         lambda.accept(this);
     }
 
-    public void build() {
+    void build() {
 
     }
 
-    public Blueprint create() {
+    Blueprint create() {
         return this.addCommand("create");
     }
 
@@ -33,14 +33,14 @@ public class Blueprint {
     }
 
     public Blueprint dropColumn(String column) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("column", column);
 
         return this.addCommand("dropColumn", map);
     }
 
     public Blueprint renameColumn(String from, String to) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("from", from);
         map.put("to", to);
 
@@ -48,24 +48,24 @@ public class Blueprint {
     }
 
     public Blueprint rename(String to) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("to", to);
 
         return this.addCommand("rename", map);
     }
 
-    protected Blueprint addCommand(String name, HashMap<String, String> parameters) {
+    private Blueprint addCommand(String name, HashMap<String, String> parameters) {
         parameters.put("name", name);
         this.commands.add(parameters);
 
         return this;
     }
 
-    protected Blueprint addCommand(String name) {
-        return this.addCommand(name, new HashMap<String, String>());
+    private Blueprint addCommand(String name) {
+        return this.addCommand(name, new HashMap<>());
     }
 
-    protected Column addColumn(String type, String name, HashMap<String, String> parameters) {
+    private Column addColumn(String type, String name, HashMap<String, String> parameters) {
         Column column = new Column(type, name, parameters);
 
         this.columns.add(column);
@@ -73,8 +73,8 @@ public class Blueprint {
         return column;
     }
 
-    protected Column addColumn(String type, String name) {
-        return this.addColumn(type, name, new HashMap<String, String>());
+    private Column addColumn(String type, String name) {
+        return this.addColumn(type, name, new HashMap<>());
     }
 
     // --------------
@@ -82,7 +82,7 @@ public class Blueprint {
     // --------------
 
     public Column character(String column, int length) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("length", Integer.toString(length));
 
         return this.addColumn("char", column, map);
@@ -93,7 +93,7 @@ public class Blueprint {
     }
 
     public Column string(String column, int length) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("length", Integer.toString(length));
 
         return this.addColumn("string", column, map);
@@ -140,7 +140,7 @@ public class Blueprint {
     }
 
     public Column tinyInteger(String column, boolean autoIncrement, boolean unsigned) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("autoIncrement", Boolean.toString(autoIncrement));
         map.put("unsigned", Boolean.toString(unsigned));
 
@@ -156,7 +156,7 @@ public class Blueprint {
     }
 
     public Column smallInteger(String column, boolean autoIncrement, boolean unsigned) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("autoIncrement", Boolean.toString(autoIncrement));
         map.put("unsigned", Boolean.toString(unsigned));
 
@@ -172,7 +172,7 @@ public class Blueprint {
     }
 
     public Column mediumInteger(String column, boolean autoIncrement, boolean unsigned) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("autoIncrement", Boolean.toString(autoIncrement));
         map.put("unsigned", Boolean.toString(unsigned));
 
@@ -188,7 +188,7 @@ public class Blueprint {
     }
 
     public Column integer(String column, boolean autoIncrement, boolean unsigned) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("autoIncrement", Boolean.toString(autoIncrement));
         map.put("unsigned", Boolean.toString(unsigned));
 
@@ -204,7 +204,7 @@ public class Blueprint {
     }
 
     public Column bigInteger(String column, boolean autoIncrement, boolean unsigned) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("autoIncrement", Boolean.toString(autoIncrement));
         map.put("unsigned", Boolean.toString(unsigned));
 
@@ -260,7 +260,7 @@ public class Blueprint {
     }
 
     public Column decimal(String column, int total, int places) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("total", Integer.toString(total));
         map.put("places", Integer.toString(places));
 
@@ -272,7 +272,7 @@ public class Blueprint {
     }
 
     public Column enumeration(String column, String[] allowed) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("length", Integer.toString(allowed.length));
 
         int index = 0;
