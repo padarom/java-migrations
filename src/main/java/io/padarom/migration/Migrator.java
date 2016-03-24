@@ -2,15 +2,23 @@ package io.padarom.migration;
 
 import org.reflections.Reflections;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class Migrator {
+    private Connection connection;
     private String basename;
 
-    public Migrator(String basename) {
+    public Migrator(Connection connection, String basename) {
+        this.connection = connection;
         this.basename = basename;
+    }
+
+    public void runAllMigrations() {
+        List<MigrationInterface> migrationList = getMigrationList();
+
     }
 
     /**
@@ -57,5 +65,9 @@ public class Migrator {
         }
 
         return migrationList;
+    }
+
+    public List<MigrationInterface> getMigrationList() {
+        return this.getMigrationList(this.basename);
     }
 }
