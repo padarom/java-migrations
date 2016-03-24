@@ -10,8 +10,9 @@ For my Java projects I more and more need to use databases, so I thought it woul
 
 ## Why this?
 
-- No need to learn the markup for XML, YAML or JSON definitions
-- Create the schema using simple, non-verbosive Java
+- No need to learn library specific markup for XML, YAML or JSON definitions
+- No need to manually write SQL
+- Create the schema using simple, nonverbose Java
 
 ## How to use
 ### Define your migration
@@ -57,6 +58,8 @@ public class CreateSecondTable implements MigrationInterface {
 
 ### Call the Migrator
 ```java
-Migrator migrator = new Migrator("path.to.your.migrations");
+java.sql.Connection databaseConnection = somehowGetYourDatabaseConnection();
+
+Migrator migrator = new Migrator(databaseConnection, "path.to.your.migrations");
 migrator.runAllMigrations();
 ```
