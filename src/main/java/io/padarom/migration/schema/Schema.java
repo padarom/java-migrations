@@ -1,9 +1,13 @@
 package io.padarom.migration.schema;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.function.Consumer;
 
 public final class Schema {
-    public static String instance = null;
+    private static Connection connection = null;
 
     protected Schema() {}
 
@@ -11,7 +15,20 @@ public final class Schema {
 
     }
 
-    public static void create(String table, Consumer<Blueprint> lambda) {
+    public static boolean hasTable(String table) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet resultSet = metaData.getTables(null, null, "%", null);
+
+        while (resultSet.next()) {
+            if (resultSet.getString(3).equals(table)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void create(String table, Consumer<Blueprint> lambda) throws SQLException {
         Blueprint blueprint = Schema.createBlueprint(table);
 
         blueprint.create();
@@ -32,8 +49,8 @@ public final class Schema {
 
     }
 
-    private static void build(Blueprint blueprint) {
-        blueprint.build(); // Connection übergeben
+    private static void build(Blueprint blueprint) throws SQLException {
+        blueprint.build(Schema.connection); // Connection übergeben
     }
 
     private static Blueprint createBlueprint(String table, Consumer<Blueprint> lambda) {
@@ -42,5 +59,13 @@ public final class Schema {
 
     private static Blueprint createBlueprint(String table) {
         return new Blueprint(table, null);
+    }
+
+    public static void setConnection(Connection connection) {
+        Schema.connection = connection;
+    }
+
+    public static Connection getConnection() {
+        return Schema.connection;
     }
 }

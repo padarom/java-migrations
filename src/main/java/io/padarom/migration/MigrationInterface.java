@@ -1,7 +1,9 @@
 package io.padarom.migration;
 
-public interface MigrationInterface {
-    void up();
+import java.sql.SQLException;
 
-    void down();
+public interface MigrationInterface {
+    void up() throws SQLException;
+
+    void down() throws SQLException;
 }

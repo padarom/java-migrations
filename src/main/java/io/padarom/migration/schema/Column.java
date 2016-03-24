@@ -6,7 +6,7 @@ public class Column {
     private String type;
     private String name;
 
-    private HashMap<String, String> attributes;
+    public HashMap<String, String> attributes;
 
     Column(String type, String name, HashMap<String, String> attributes) {
         this.type = type;
@@ -17,6 +17,14 @@ public class Column {
 
     public Column(String type, String name) {
         this(type, name, new HashMap<>());
+    }
+
+    public String getAttribute(String attribute) {
+        return this.attributes.get(attribute);
+    }
+
+    public boolean hasAttribute(String attribute) {
+        return this.attributes.containsKey(attribute);
     }
 
     public Column nullable() {

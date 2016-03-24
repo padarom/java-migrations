@@ -1,23 +1,43 @@
 package io.padarom.migration.schema;
 
+import io.padarom.migration.schema.grammars.SQLiteGrammar;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class Blueprint {
-    private String table;
+    public String table;
     private List<HashMap<String, String>> commands = new ArrayList<>();
-    private List<Column> columns = new ArrayList<>();
+    public List<Column> columns = new ArrayList<>();
+
+    public boolean temporary = false;
 
     Blueprint(String table, Consumer<Blueprint> lambda) {
         this.table = table;
-
-        lambda.accept(this);
     }
 
-    void build() {
+    void build(Connection connection) throws SQLException {
+        for (String sql : this.toSql(connection)) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(sql);
+        }
+    }
 
+    private List<String> toSql(Connection connection) {
+        List<String> statements = new ArrayList<>();
+
+        for (HashMap<String, String> command : this.commands) {
+            if (command.get("name").equals("create")) {
+                statements.add(SQLiteGrammar.compileCreate(this, command));
+            }
+        }
+
+        return statements;
     }
 
     Blueprint create() {
@@ -273,7 +293,7 @@ public class Blueprint {
 
     public Column enumeration(String column, String[] allowed) {
         HashMap<String, String> map = new HashMap<>();
-        map.put("length", Integer.toString(allowed.length));
+        map.put("enumeration-length", Integer.toString(allowed.length));
 
         int index = 0;
         for (String value : allowed) {

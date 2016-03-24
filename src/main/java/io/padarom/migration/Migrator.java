@@ -1,5 +1,8 @@
 package io.padarom.migration;
 
+import io.padarom.migration.repository.DatabaseMigrationRepository;
+import io.padarom.migration.repository.MigrationRepositoryInterface;
+import io.padarom.migration.schema.Schema;
 import org.reflections.Reflections;
 
 import java.sql.Connection;
@@ -8,17 +11,29 @@ import java.util.List;
 import java.util.Set;
 
 public class Migrator {
+    private MigrationRepositoryInterface migrationRepository;
     private Connection connection;
     private String basename;
 
-    public Migrator(Connection connection, String basename) {
+    public Migrator(MigrationRepositoryInterface repositoryInterface, Connection connection, String basename) {
+        this.migrationRepository = repositoryInterface;
         this.connection = connection;
         this.basename = basename;
+
+        // Prepare the connection for the schema
+        Schema.setConnection(connection);
+    }
+
+    public Migrator(Connection connection, String basename) {
+        this(new DatabaseMigrationRepository(connection, "migrations"), connection, basename);
     }
 
     public void runAllMigrations() {
-        List<MigrationInterface> migrationList = getMigrationList();
+        if (! migrationRepository.repositoryExists()) {
+            migrationRepository.createRepository();
+        }
 
+        List<MigrationInterface> migrationList = getMigrationList();
     }
 
     /**
