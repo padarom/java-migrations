@@ -63,3 +63,18 @@ java.sql.Connection databaseConnection = somehowGetYourDatabaseConnection();
 Migrator migrator = new Migrator(databaseConnection, "path.to.your.migrations");
 migrator.runAllMigrations();
 ```
+
+If not otherwise specified the Migrator will use a `DatabaseMigrationRepository` with the table name `migrations`. What this means is, that the list of the ran migrations and batches will be stored inside a database table with the name _migrations_. You can override this table name, or use your own MigrationRepository (implementing the `MigrationRepositoryInterface`) and pass it to the Migrator constructor as the first parameter:
+
+```java
+DatabaseMigrationRepository repository = new DatabaseMigrationRepository(databaseConnection, "custom_migrations_table");
+Migrator migrator = new Migrator(repository, databaseConnection, "path.to.your.migrations");
+```
+
+### SQL Flavors
+This library is working with JDBC. All built classes use instances of `java.sql.Connection` to interact with the database. It will automatically determine the flavor of your DBMS by analyzing the driver's class name. Currently supported are:
+
+- [x] SQLite (`org.sqlite.JDBC`)
+- [ ] MySQL (`com.mysql.jdbc.Driver`)
+- [ ] PostgreSQL (`org.postgresql.Driver`)
+- [ ] SqlServer (`com.microsoft.sqlserver.jdbc.SQLServerDriver`)
