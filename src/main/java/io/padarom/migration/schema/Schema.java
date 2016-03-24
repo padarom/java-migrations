@@ -28,7 +28,7 @@ public final class Schema {
         return false;
     }
 
-    public static void create(String table, Consumer<Blueprint> lambda) throws SQLException {
+    public static void create(String table, Consumer<Blueprint> lambda) throws Exception {
         Blueprint blueprint = Schema.createBlueprint(table);
 
         blueprint.create();
@@ -49,7 +49,7 @@ public final class Schema {
 
     }
 
-    private static void build(Blueprint blueprint) throws SQLException {
+    private static void build(Blueprint blueprint) throws Exception {
         blueprint.build(Schema.connection); // Connection übergeben
     }
 

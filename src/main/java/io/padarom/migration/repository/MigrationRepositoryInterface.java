@@ -2,6 +2,7 @@ package io.padarom.migration.repository;
 
 import io.padarom.migration.Migration;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface MigrationRepositoryInterface {
@@ -10,7 +11,7 @@ public interface MigrationRepositoryInterface {
      *
      * @return
      */
-    List<String> getRan();
+    List<String> getRan() throws SQLException;
 
     /**
      * Get the last migration batch.

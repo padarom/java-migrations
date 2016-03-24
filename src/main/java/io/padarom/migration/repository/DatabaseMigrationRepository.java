@@ -18,8 +18,22 @@ public class DatabaseMigrationRepository implements MigrationRepositoryInterface
     }
 
     @Override
-    public List<String> getRan() {
-        return new ArrayList<>();
+    public List<String> getRan() throws SQLException {
+        List<String> ranMigrations = new ArrayList<>();
+
+        if (! repositoryExists()) {
+            return ranMigrations;
+        }
+
+        Statement statement = this.connection.createStatement();
+        ResultSet results = statement.executeQuery("select migration from " + this.table + " order by batch asc, migration asc");
+
+
+        while (results.next()) {
+            ranMigrations.add(results.getString("migration"));
+        }
+
+        return ranMigrations;
     }
 
     @Override
@@ -29,16 +43,45 @@ public class DatabaseMigrationRepository implements MigrationRepositoryInterface
 
     @Override
     public void log(String migration, int batch) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("insert into " + table + " values(?, ?)");
+            statement.setString(1, migration);
+            statement.setInt(2, batch);
 
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete(Migration migration) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("delete from " + table + " where migration = ?");
+            statement.setString(1, migration.getClass().getSimpleName());
 
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public int getNextBatchNumber() {
+        return getLastBatchNumber() + 1;
+    }
+
+    public int getLastBatchNumber() {
+        try {
+            Statement statement = null;
+            statement = this.connection.createStatement();
+            ResultSet results = statement.executeQuery("select max(batch) from " + this.table);
+
+            return results.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return 0;
     }
 
@@ -49,7 +92,7 @@ public class DatabaseMigrationRepository implements MigrationRepositoryInterface
                 table.string("migration");
                 table.integer("batch");
             });
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -62,11 +105,6 @@ public class DatabaseMigrationRepository implements MigrationRepositoryInterface
             // Silently discard the error
             return false;
         }
-    }
-
-    public void table() throws SQLException {
-        Statement statement = this.connection.createStatement();
-        ResultSet results = statement.executeQuery("SELECT * FROM " + this.table);
     }
 
     public Connection getConnection() {

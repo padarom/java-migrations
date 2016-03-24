@@ -10,7 +10,7 @@ import java.sql.SQLException;
         priority = 20
 )
 public class CreateUsersTable implements MigrationInterface {
-    public void up() throws SQLException {
+    public void up() throws Exception {
         Schema.create("users", table -> {
             table.increments("id");
             table.string("name");

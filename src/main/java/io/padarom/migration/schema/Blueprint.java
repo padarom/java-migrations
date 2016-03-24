@@ -1,9 +1,11 @@
 package io.padarom.migration.schema;
 
+import io.padarom.migration.schema.grammars.Grammar;
+import io.padarom.migration.schema.grammars.MySqlGrammar;
+import io.padarom.migration.schema.grammars.PostgresGrammar;
 import io.padarom.migration.schema.grammars.SQLiteGrammar;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +16,7 @@ public class Blueprint {
     public String table;
     private List<HashMap<String, String>> commands = new ArrayList<>();
     public List<Column> columns = new ArrayList<>();
+    public Grammar grammar = null;
 
     public boolean temporary = false;
 
@@ -21,19 +24,47 @@ public class Blueprint {
         this.table = table;
     }
 
-    void build(Connection connection) throws SQLException {
+    void build(Connection connection) throws Exception {
         for (String sql : this.toSql(connection)) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(sql);
         }
     }
 
-    private List<String> toSql(Connection connection) {
+    void setGrammar(Grammar grammar) {
+        this.grammar = grammar;
+    }
+
+    private Grammar getGrammar(Connection connection) {
+        if (this.grammar != null) {
+            return this.grammar;
+        }
+
+        String className = connection.getClass().getName();
+
+        switch (className) {
+            case "org.sqlite.SQLiteConnection":
+                return new SQLiteGrammar();
+            case "com.mysql.jdbc.Connection":
+                return new MySqlGrammar();
+            case "org.postgresql.Connection":
+                return new PostgresGrammar();
+        }
+
+        return null;
+    }
+
+    private List<String> toSql(Connection connection) throws Exception {
         List<String> statements = new ArrayList<>();
+
+        SQLiteGrammar grammar = (SQLiteGrammar) getGrammar(connection);
+        if (grammar == null) {
+            throw new Exception("The used SQL driver is not supported.");
+        }
 
         for (HashMap<String, String> command : this.commands) {
             if (command.get("name").equals("create")) {
-                statements.add(SQLiteGrammar.compileCreate(this, command));
+                statements.add(grammar.compileCreate(this, command));
             }
         }
 
@@ -305,10 +336,6 @@ public class Blueprint {
 
     public Column json(String column) {
         return this.addColumn("json", column);
-    }
-
-    public Column jsonb(String column) {
-        return this.addColumn("jsonb", column);
     }
 
     public Column date(String column) {

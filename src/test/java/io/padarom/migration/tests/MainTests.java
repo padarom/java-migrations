@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 
 public class MainTests {
 
+    private MigrationRepositoryInterface migrationRepository;
     private Connection connection;
     private Migrator migrator;
 
@@ -22,13 +23,13 @@ public class MainTests {
         // Just use a Memory Database, don't save it to disk
         connection = DriverManager.getConnection("jdbc:sqlite::memory:");
 
-        this.migrator = new Migrator(connection, "io.padarom.migration.tests.migrations");
+        this.migrationRepository = new DatabaseMigrationRepository(connection, "migrations");
+        this.migrator = new Migrator(migrationRepository, connection, "io.padarom.migration.tests.migrations");
     }
 
     @Test
     public void itCreatesAMigrationTable() throws SQLException {
-        MigrationRepositoryInterface repository = new DatabaseMigrationRepository(connection, "migrations");
-        repository.createRepository();
+        migrationRepository.createRepository();
 
         assertTrue(Schema.hasTable("migrations"));
     }
@@ -49,13 +50,24 @@ public class MainTests {
     }
 
     @Test
-    public void itCanCreateTables() throws SQLException {
+    public void itCanCreateTables() throws Exception {
         Schema.create("test_table", table -> {
             table.increments("id");
             table.string("name", 35).nullable().defaultsTo("peter");
+            table.enumeration("value_list", new String[] {"a", "b", "c"});
+            table.bool("active").defaultsTo("1");
         });
 
         assertTrue(Schema.hasTable("test_table"));
+    }
+
+    @Test
+    public void itRunsAllMigrations() throws Exception {
+        assertEquals(migrationRepository.getRan().size(), 0);
+
+        migrator.runAllMigrations();
+
+        assertEquals(migrationRepository.getRan().size(), 2);
     }
 
 }

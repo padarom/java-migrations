@@ -28,12 +28,17 @@ public class Migrator {
         this(new DatabaseMigrationRepository(connection, "migrations"), connection, basename);
     }
 
-    public void runAllMigrations() {
+    public void runAllMigrations() throws Exception {
         if (! migrationRepository.repositoryExists()) {
             migrationRepository.createRepository();
         }
 
+        int nextBatchNumber = migrationRepository.getNextBatchNumber();
         List<MigrationInterface> migrationList = getMigrationList();
+        for (MigrationInterface migration : migrationList) {
+            migrationRepository.log(migration.getClass().getSimpleName(), nextBatchNumber);
+            migration.up();
+        }
     }
 
     /**

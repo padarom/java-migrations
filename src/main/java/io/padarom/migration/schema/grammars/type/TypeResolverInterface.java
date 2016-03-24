@@ -2,6 +2,7 @@ package io.padarom.migration.schema.grammars.type;
 
 public interface TypeResolverInterface {
     public String charType();
+    public String stringType();
     public String uuidType();
     public String enumType();
     public String binaryType();

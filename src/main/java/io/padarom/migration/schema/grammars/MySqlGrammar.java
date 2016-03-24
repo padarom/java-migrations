@@ -2,12 +2,12 @@ package io.padarom.migration.schema.grammars;
 
 import io.padarom.migration.schema.Blueprint;
 import io.padarom.migration.schema.Column;
-import io.padarom.migration.schema.grammars.type.SQLiteTypeResolver;
+import io.padarom.migration.schema.grammars.type.MySqlTypeResolver;
 import io.padarom.migration.schema.grammars.type.TypeResolverInterface;
 
 import java.util.Map;
 
-public class SQLiteGrammar extends Grammar {
+public class MySqlGrammar extends Grammar {
     public String compileCreate(Blueprint blueprint, Map<String, String> command) {
         String columns = String.join(", ", getColumns(blueprint));
 
@@ -46,6 +46,6 @@ public class SQLiteGrammar extends Grammar {
     }
 
     public TypeResolverInterface getTypeResolver() {
-        return new SQLiteTypeResolver();
+        return new MySqlTypeResolver();
     }
 }

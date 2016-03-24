@@ -1,9 +1,9 @@
 package io.padarom.migration.schema.grammars.type;
 
-public class SQLiteTypeResolver implements TypeResolverInterface {
+public class MySqlTypeResolver implements TypeResolverInterface {
     @Override
     public String charType() {
-        return "character";
+        return "char";
     }
 
     @Override
@@ -18,7 +18,7 @@ public class SQLiteTypeResolver implements TypeResolverInterface {
 
     @Override
     public String enumType() {
-        return "varchar";
+        return "enum";
     }
 
     @Override
@@ -33,7 +33,7 @@ public class SQLiteTypeResolver implements TypeResolverInterface {
 
     @Override
     public String timeType() {
-        return "datetime";
+        return "time";
     }
 
     @Override
@@ -48,12 +48,12 @@ public class SQLiteTypeResolver implements TypeResolverInterface {
 
     @Override
     public String mediumTextType() {
-        return "text";
+        return "mediumtext";
     }
 
     @Override
     public String longTextType() {
-        return "text";
+        return "longtext";
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SQLiteTypeResolver implements TypeResolverInterface {
 
     @Override
     public String integerType() {
-        return "integer";
+        return "int";
     }
 
     @Override
@@ -103,6 +103,6 @@ public class SQLiteTypeResolver implements TypeResolverInterface {
 
     @Override
     public String booleanType() {
-        return "boolean";
+        return "tinyint(1)";
     }
 }

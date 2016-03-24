@@ -11,7 +11,7 @@ import java.sql.SQLException;
         priority = 10
 )
 public class CreateTestsTable implements MigrationInterface {
-    public void up() throws SQLException {
+    public void up() throws Exception {
         Schema.create("tests", table -> {
             table.increments("id");
             table.string("description");

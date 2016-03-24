@@ -3,7 +3,7 @@ package io.padarom.migration;
 import java.sql.SQLException;
 
 public interface MigrationInterface {
-    void up() throws SQLException;
+    void up() throws Exception;
 
     void down() throws SQLException;
 }
