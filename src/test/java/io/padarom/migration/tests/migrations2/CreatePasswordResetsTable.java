@@ -2,7 +2,10 @@ package io.padarom.migration.tests.migrations2;
 
 import io.padarom.migration.Migration;
 import io.padarom.migration.MigrationInterface;
+import io.padarom.migration.schema.ForeignKeyConstraint;
 import io.padarom.migration.schema.Schema;
+
+import static io.padarom.migration.schema.ForeignKeyConstraint.ConstraintType.CASCADE;
 
 @Migration(
         priority = 21
@@ -15,6 +18,8 @@ public class CreatePasswordResetsTable implements MigrationInterface {
             table.string("reset_token").nullable();
 
             table.timestamps();
+
+            table.foreign("user_id", "id", "users").onDelete("cascade");
         });
     }
 

@@ -14,8 +14,13 @@ import java.util.function.Consumer;
 
 public class Blueprint {
     public String table;
+
     private List<HashMap<String, String>> commands = new ArrayList<>();
+
     public List<Column> columns = new ArrayList<>();
+
+    public List<ForeignKeyConstraint> constraints = new ArrayList<>();
+
     public Grammar grammar = null;
 
     public boolean temporary = false;
@@ -118,7 +123,6 @@ public class Blueprint {
 
     private Column addColumn(String type, String name, HashMap<String, String> parameters) {
         Column column = new Column(type, name, parameters);
-
         this.columns.add(column);
 
         return column;
@@ -126,6 +130,13 @@ public class Blueprint {
 
     private Column addColumn(String type, String name) {
         return this.addColumn(type, name, new HashMap<>());
+    }
+
+    private ForeignKeyConstraint addConstraint(String column, String references, String on) {
+        ForeignKeyConstraint constraint = new ForeignKeyConstraint(column, references, on);
+        this.constraints.add(constraint);
+
+        return constraint;
     }
 
     // --------------
@@ -367,4 +378,6 @@ public class Blueprint {
     public Column binary(String column) {
         return this.addColumn("binary", column);
     }
+
+    public ForeignKeyConstraint foreign(String column, String references, String on) { return addConstraint(column, references, on); }
 }
