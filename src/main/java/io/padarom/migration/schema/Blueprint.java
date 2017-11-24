@@ -57,7 +57,7 @@ public class Blueprint {
     private List<String> toSql(Connection connection) throws Exception {
         List<String> statements = new ArrayList<>();
 
-        SQLiteGrammar grammar = (SQLiteGrammar) getGrammar(connection);
+        Grammar grammar = getGrammar(connection);
         if (grammar == null) {
             throw new Exception("The used SQL driver is not supported.");
         }

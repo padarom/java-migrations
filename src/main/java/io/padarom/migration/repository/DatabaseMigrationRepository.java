@@ -1,8 +1,8 @@
 package io.padarom.migration.repository;
 
 import io.padarom.migration.Migration;
+import io.padarom.migration.MigrationInterface;
 import io.padarom.migration.schema.Schema;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,35 +18,66 @@ public class DatabaseMigrationRepository implements MigrationRepositoryInterface
     }
 
     @Override
-    public List<String> getRan() throws SQLException {
-        List<String> ranMigrations = new ArrayList<>();
+    public List<String> getRan() {
+        try {
+            Statement statement = this.connection.createStatement();
+            ResultSet results = statement.executeQuery("select migration from " + this.table + " order by batch asc, migration asc");
 
-        if (! repositoryExists()) {
-            return ranMigrations;
+            return createMigrationList(results);
+        } catch (SQLException e) {
+            return new ArrayList<>();
         }
+    }
 
-        Statement statement = this.connection.createStatement();
-        ResultSet results = statement.executeQuery("select migration from " + this.table + " order by batch asc, migration asc");
+    @Override
+    public List<String> getMigrations(int step) {
+        try {
+            Statement statement = this.connection.createStatement();
+            ResultSet results = statement.executeQuery("select migration from " + this.table + " where batch >= 1 order by batch desc, priority desc limit " + step);
 
-
-        while (results.next()) {
-            ranMigrations.add(results.getString("migration"));
+            return createMigrationList(results);
+        } catch (SQLException e) {
+            return new ArrayList<>();
         }
-
-        return ranMigrations;
     }
 
     @Override
     public List<String> getLast() {
-        return null;
+        try {
+            PreparedStatement statement = this.connection.prepareStatement("select migration from " + this.table + " where batch = ? order by priority desc");
+            statement.setInt(1, getLastBatchNumber());
+            ResultSet results = statement.executeQuery();
+
+            return createMigrationList(results);
+        } catch (SQLException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Returns a list of migrations1 from the provided result set
+     *
+     * @param results List of migrations1 as returned by a query
+     * @return
+     * @throws SQLException
+     */
+    protected List<String> createMigrationList(ResultSet results) throws SQLException {
+        List<String> migrations = new ArrayList<>();
+
+        while (results.next()) {
+            migrations.add(results.getString("migration"));
+        }
+
+        return migrations;
     }
 
     @Override
-    public void log(String migration, int batch) {
+    public void log(String migration, int batch, int priority) {
         try {
-            PreparedStatement statement = connection.prepareStatement("insert into " + table + " values(?, ?)");
+            PreparedStatement statement = connection.prepareStatement("insert into " + table + " values(?, ?, ?)");
             statement.setString(1, migration);
             statement.setInt(2, batch);
+            statement.setInt(3, priority);
 
             statement.execute();
         } catch (SQLException e) {
@@ -55,7 +86,7 @@ public class DatabaseMigrationRepository implements MigrationRepositoryInterface
     }
 
     @Override
-    public void delete(Migration migration) {
+    public void delete(MigrationInterface migration) {
         try {
             PreparedStatement statement = connection.prepareStatement("delete from " + table + " where migration = ?");
             statement.setString(1, migration.getClass().getSimpleName());
@@ -91,6 +122,7 @@ public class DatabaseMigrationRepository implements MigrationRepositoryInterface
             Schema.create(this.table, table -> {
                 table.string("migration");
                 table.integer("batch");
+                table.integer("priority");
             });
         } catch (Exception e) {
             e.printStackTrace();

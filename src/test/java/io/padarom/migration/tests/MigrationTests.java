@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class MainTests {
+public class MigrationTests {
 
     private MigrationRepositoryInterface migrationRepository;
     private Connection connection;
@@ -24,7 +24,7 @@ public class MainTests {
         connection = DriverManager.getConnection("jdbc:sqlite::memory:");
 
         this.migrationRepository = new DatabaseMigrationRepository(connection, "migrations");
-        this.migrator = new Migrator(migrationRepository, connection, "io.padarom.migration.tests.migrations");
+        this.migrator = new Migrator(migrationRepository, connection, "io.padarom.migration.tests.migrations1");
     }
 
     @Test
@@ -66,8 +66,27 @@ public class MainTests {
         assertEquals(migrationRepository.getRan().size(), 0);
 
         migrator.runAllMigrations();
-
         assertEquals(migrationRepository.getRan().size(), 2);
     }
 
+    @Test
+    public void itCanRollbackMigrationsByBatch() throws Exception {
+        migrator.runAllMigrations();
+        assertEquals(migrationRepository.getRan().size(), 2);
+
+        migrator.rollback();
+        assertEquals(migrationRepository.getRan().size(), 0);
+    }
+
+    @Test
+    public void itCanRollbackMigrationsIndividually() throws Exception {
+        migrator.runAllMigrations();
+        assertEquals(migrationRepository.getRan().size(), 2);
+
+        migrator.rollback(1);
+        assertEquals(migrationRepository.getRan().size(), 1);
+
+        migrator.rollback(1);
+        assertEquals(migrationRepository.getRan().size(), 0);
+    }
 }

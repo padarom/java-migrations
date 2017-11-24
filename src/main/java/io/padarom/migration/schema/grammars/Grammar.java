@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class Grammar {
     public abstract TypeResolverInterface getTypeResolver();
@@ -41,4 +42,6 @@ public abstract class Grammar {
     public String wrap(String toWrap) {
         return "\"" + toWrap + "\"";
     }
+
+    public abstract String compileCreate(Blueprint blueprint, Map<String, String> command);
 }
