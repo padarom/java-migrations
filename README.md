@@ -3,16 +3,35 @@
 Java Migrations for Java 8. _This package is a work in progress._
 
 ## About this project
-I make a living in the world of PHP and personally love the PHP web framework [Laravel](https://laravel.com/). One of the many great features it offers are [Database Migrations](https://laravel.com/docs/5.2/migrations). Their description of it is as follows:
+I make a living in the world of PHP and love working with the PHP web framework [Laravel](https://laravel.com/). One of the many great features it offers are [Database Migrations](https://laravel.com/docs/5.2/migrations). Their description of it is as follows:
 > Migrations are like version control for your database, allowing a team to easily modify and share the application's database schema. Migrations are typically paired with Laravel's schema builder to easily build your application's database schema.
 
-For my Java projects I more and more need to use databases, so I thought it would make sense to have a similar tool at hand that allows you to easily create and then run migrations without too much boilerplate code. The other migration tools I've found for Java didn't quite fit my needs, so I decided to write my own, heavily inspired by Laravel's migration syntax.
+For my Java projects I more and more need to use databases, so I thought it would make sense to have a similar tool at hand that allows me to easily create and then run migrations without too much boilerplate code. The other migration tools I've found for Java didn't quite fit my needs, so I decided to write my own, heavily inspired by Laravel's migration and schema builder syntax.
 
-## Why this?
+### Roadmap
+- Migrations
+  - [x] Run migrations within package
+  - [ ] Run single migrations
+  - [ ] Rollback all migrations
+  - [x] Rollback batch of migrations
+  - [x] Rollback individual migrations
+  - [x] Create Tables
+  - [x] Drop Tables
+  - [ ] Modify existing tables
+  - [ ] Rename tables
+- Schema Builder
+  - [x] Custom columns
+  - [ ] Foreign keys
+  - [ ] Custom indices
+  - [ ] Pre-defined column definitions for ease of use
 
+## Why should you use this?
 - No need to learn library specific markup for XML, YAML or JSON definitions
-- No need to manually write SQL
-- Create the schema using simple, nonverbose Java
+- No need to manually write SQL statements
+- Create your database schema using simple, nonverbose Java
+
+## What this isn't
+Keep in mind that this is not an ORM and not meant to ever become one. There are quasi standards for Java ORMs out there already, so this library focuses solely on setting up your database.
 
 ## How to use
 ### Define your migration
@@ -64,15 +83,17 @@ Migrator migrator = new Migrator(databaseConnection, "path.to.your.migrations");
 migrator.runAllMigrations();
 ```
 
-If not otherwise specified the Migrator will use a `DatabaseMigrationRepository` with the table name `migrations`. What this means is, that the list of the ran migrations and batches will be stored inside a database table with the name _migrations_. You can override this table name, or use your own MigrationRepository (implementing the `MigrationRepositoryInterface`) and pass it to the Migrator constructor as the first parameter:
+In this example the migrator automatically creates a `DatabaseMigrationRepository`, which stores a list of all previously ran migrations within the database, in the table _migrations_. If you don't want this, you can pass in your own `MigrationRepositoryInterface` to the migrator's constructor:
 
 ```java
 DatabaseMigrationRepository repository = new DatabaseMigrationRepository(databaseConnection, "custom_migrations_table");
 Migrator migrator = new Migrator(repository, databaseConnection, "path.to.your.migrations");
 ```
 
+By doing this you can store the information of which migrations have already run however you'd like.
+
 ### SQL Flavors
-This library is working with JDBC. All built classes use instances of `java.sql.Connection` to interact with the database. It will automatically determine the flavor of your DBMS by analyzing the driver's class name. Currently supported are:
+This library works with JDBC. This library uses instances of `java.sql.Connection` to interact with the database. It will automatically determine the flavor of your DBMS by analyzing the driver's class name. Currently supported, and planned for future support are:
 
 - [x] SQLite (`org.sqlite.JDBC`)
 - [ ] MySQL (`com.mysql.jdbc.Driver`)

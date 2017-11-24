@@ -8,7 +8,7 @@ import io.padarom.migration.schema.Schema;
 import static io.padarom.migration.schema.ForeignKeyConstraint.ConstraintType.CASCADE;
 
 @Migration(
-        priority = 21
+        priority = 10
 )
 public class CreatePasswordResetsTable implements MigrationInterface {
     public void up() throws Exception {
